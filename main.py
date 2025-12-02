@@ -51,14 +51,6 @@ button_style = {
 btnFrame.grid_columnconfigure(0, weight=1)
 btnFrame.grid_columnconfigure(1, weight=1)
 
-# create list
-createbtn = Button(btnFrame, text="Create Group", **button_style, command=lambda: create_group(window))
-createbtn.grid(row=0, column=0, padx=10)
-
-# btn list
-listbtn = Button(btnFrame, text="Create Members", **button_style, command=lambda: create_member(window))
-listbtn.grid(row=0, column=1, padx=10)
-
 #group list frame
 grouplistFrame = Frame(mainFrame, bg="#c0abab")
 grouplistFrame.place(relx=0.5,rely=0.2,anchor="n",relwidth=0.9,relheight=0.8)
@@ -71,22 +63,59 @@ def render_groups():
     groups = load_memory()
 
     if not groups:
-        Label(grouplistFrame, text="No Groups Created", font=("Segoe UI", 14), bg="f0f0f0")
+        Label(grouplistFrame, text="No Groups Created", font=("Segoe UI", 14), bg="#f0f0f0")
         return
     
-    for groups in groups:
-        name = groups.get("GroupName", "Unnamed")
-        max_qnt = int(groups.get("quantity", 0))
-        members = int(groups.get("members", []))
+    for g in groups:
+        name = g.get("GroupName", "Unnamed")
 
-    if isinstance(members, str):
-        members = [] if members.strip() == "" else [members]
+        # quantidade máxima
+        try:
+            max_qnt = int(g.get("quantity", 0))
+        except:
+            max_qnt = 0
 
-    currentQnt = len(members)
+        # membros
+        members = g.get("members", [])
+        if isinstance(members, str):
+            members = [] if members.strip() == "" else [members]
 
-    #card frame
-    card = Frame(grouplistFrame, bg="white", bd=1, relief="solid")
-    card.pack(fill="x", pady=10, padx=10)
+        currentQnt = len(members)
 
+        #card frame
+        card = Frame(grouplistFrame, bg="white", bd=1, relief="solid")
+        card.pack(fill="x", pady=10, padx=10)
+
+        #groupname
+        Label(card,text=name, font=("Sagoe UI", 16,"bold"), bg="white").pack(anchor="w", padx=20, pady=(10, 0))
+        #quantity
+        Label(card, text=f"Members: {currentQnt}/{max_qnt}", font=("Segoe UI", 12), bg="white").pack(anchor="w", padx=20, pady=5)
+
+        #btn details
+        Button(card, text="Details", bg="#4a90e2", fg="white", font=("Segoe UI",10,"bold"), width=12).pack(anchor="e", pady=10)
+
+#create btn and real time update
+
+def open_create_group():
+    win = create_group(window)
+    win.wait_window()
+    render_groups()
+
+
+def open_create_member():
+    win = create_member(window)
+    win.wait_window()
+    render_groups()
+
+
+createbtn = Button(btnFrame, text="Create Group",
+                   **button_style, command=open_create_group)
+createbtn.grid(row=0, column=0, padx=10)
+
+listbtn = Button(btnFrame, text="Create Members",
+                 **button_style, command=open_create_member)
+listbtn.grid(row=0, column=1, padx=10)
+
+render_groups()
 #main 
 window.mainloop()

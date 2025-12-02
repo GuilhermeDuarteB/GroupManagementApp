@@ -63,7 +63,7 @@ def create_group(parent):
         #group verify
 
         for g in memory:
-            if g["GroupName"].lower() == name.lower():
+            if g.get("GroupName", "").lower() == name.lower():
                 messagebox.showerror("Error", "This group already exist!")
                 return
 
@@ -71,7 +71,7 @@ def create_group(parent):
             "GroupName": name,
             "quantity": membersNr,
             "description": desc,
-            "members": ""}
+            "members": []}
 
         memory.append(new_group)
         save_memory(memory)
@@ -80,3 +80,4 @@ def create_group(parent):
         createGroup.destroy()
 
     Button(createGroup, text="Save", font=("Arial", 12), command=save).pack(pady=20)
+    return createGroup
