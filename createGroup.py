@@ -63,14 +63,15 @@ def create_group(parent):
         #group verify
 
         for g in memory:
-            if g["name"].lower() == name.lower():
+            if g["GroupName"].lower() == name.lower():
                 messagebox.showerror("Error", "This group already exist!")
                 return
 
         new_group = {
-            "name": name,
+            "GroupName": name,
             "quantity": membersNr,
-            "description": desc}
+            "description": desc,
+            "members": ""}
 
         memory.append(new_group)
         save_memory(memory)
